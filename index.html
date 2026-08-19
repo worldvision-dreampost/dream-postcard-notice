@@ -478,6 +478,32 @@ footer {
   .fab { right: 16px; bottom: 16px; }
   .filter-panel { right: 16px; left: 16px; width: auto; max-width: none; bottom: 80px; }
 }
+
+.cal-card { background: var(--paper-3); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 16px; margin: 4px 0 18px; }
+.cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.cal-head h2 { font-size:14px; font-weight:800; margin:0; display:flex; align-items:center; gap:6px; color: var(--ink); }
+.cal-nav { display:flex; align-items:center; gap:8px; }
+.cal-nav button { border:1px solid var(--line); background:var(--paper); color:var(--ink-soft); width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:13px; line-height:1; }
+.cal-nav button:hover { border-color:var(--accent); color:var(--accent); }
+.cal-month-label { font-family: ui-monospace, "SF Mono", "Roboto Mono", monospace; font-size:12.5px; font-weight:700; color:var(--ink); min-width:72px; text-align:center; }
+.cal-grid { display:grid; grid-template-columns: repeat(7,1fr); gap:4px; }
+.cal-dow { font-size:10.5px; font-weight:700; color:var(--ink-faint); text-align:center; padding:2px 0 6px; }
+.cal-cell { position:relative; aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:8px; cursor:default; font-size:12px; color:var(--ink-soft); }
+.cal-cell.pad { visibility:hidden; }
+.cal-cell.has-event { cursor:pointer; color:var(--ink); font-weight:700; background:var(--accent-soft); }
+.cal-cell.has-event:hover { background: var(--accent-2-soft); }
+.cal-cell.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cal-cell.selected { background: var(--accent); color:#fff; }
+.cal-dot { width:4px; height:4px; border-radius:50%; background:var(--accent-2); margin-top:2px; }
+.cal-cell.selected .cal-dot { background:#fff; }
+.cal-detail { display:none; }
+.cal-detail.show { display:block; margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); }
+.cal-detail-date { font-family: ui-monospace, "SF Mono", "Roboto Mono", monospace; font-size:11.5px; font-weight:700; color:var(--ink-faint); margin-bottom:8px; }
+.cal-event-item { display:flex; gap:8px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--line); }
+.cal-event-item:last-child { border-bottom:none; }
+.cal-event-cat { flex-shrink:0; font-size:10.5px; font-weight:700; color:var(--accent-2); background:var(--accent-2-soft); padding:2px 7px; border-radius:999px; white-space:nowrap; }
+.cal-event-title { font-size:13px; font-weight:700; color:var(--ink); }
+.cal-event-range { font-size:11px; color:var(--ink-faint); margin-top:2px; font-family: ui-monospace, "SF Mono", "Roboto Mono", monospace; }
 </style>
 </head>
 <body>
@@ -573,6 +599,19 @@ footer {
 </form>
 
 <main>
+<div class="cal-card">
+  <div class="cal-head">
+    <h2>📅 일정 캘린더</h2>
+    <div class="cal-nav">
+      <button type="button" id="cal-prev" aria-label="이전 달">‹</button>
+      <span class="cal-month-label" id="cal-month-label"></span>
+      <button type="button" id="cal-next" aria-label="다음 달">›</button>
+    </div>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div class="cal-detail" id="cal-detail"></div>
+</div>
+
   <div class="result-meta" id="result-meta"></div>
   <div id="list"></div>
   <div class="empty-state" id="empty-state" style="display:none;">
@@ -915,6 +954,131 @@ footer {
   });
 
   render();
+})();
+</script>
+
+<script>
+(function(){
+  var EVENTS = [
+    {start:"2026-02-10", end:"2026-02-10", title:"담당자 워크샵 참석", cat:"HR"},
+    {start:"2026-02-20", end:"2026-02-20", title:"학교 개발주체 파악 마감", cat:"SCHOOL"},
+    {start:"2026-03-01", end:"2026-03-01", title:"꿈엽서 홈페이지 공식 오픈", cat:"GEN"},
+    {start:"2026-03-03", end:"2026-03-03", title:"언론보도 예정", cat:"GEN"},
+    {start:"2026-04-01", end:"2026-04-01", title:"엽서 수거 택배 정책 변경 시행", cat:"SHIP"},
+    {start:"2026-04-30", end:"2026-04-30", title:"학급이벤트 신청 마감(연장 전)", cat:"EVENT"},
+    {start:"2026-05-15", end:"2026-05-15", title:"학급이벤트 신청기간 연장 마감", cat:"EVENT"},
+    {start:"2026-06-08", end:"2026-06-08", title:"4차 자체심사 참여여부 회신 마감", cat:"JUDGE"},
+    {start:"2026-06-12", end:"2026-06-12", title:"대회 접수 마감·홈페이지 기능 종료", cat:"SCHED"},
+    {start:"2026-06-26", end:"2026-06-26", title:"택배 수거 연장 접수 마감", cat:"SHIP"},
+    {start:"2026-07-20", end:"2026-07-24", title:"4차 자체심사 진행 기간", cat:"JUDGE"},
+    {start:"2026-08-12", end:"2026-08-12", title:"지역후원처상 명단 입력 마감", cat:"JUDGE"},
+    {start:"2026-08-14", end:"2026-08-18", title:"심사 리스트 최종 확정", cat:"SCHED"},
+    {start:"2026-08-20", end:"2026-08-20", title:"수상자 발표·알림톡 발송", cat:"SCHED"},
+    {start:"2026-08-21", end:"2026-08-28", title:"수상자 정보 확인", cat:"SCHED"},
+    {start:"2026-09-01", end:"2026-09-11", title:"상장 발급요청/제작", cat:"SCHED"},
+    {start:"2026-09-14", end:"2026-09-14", title:"상장 발송 시작", cat:"SCHED"}
+  ];
+
+  var DATA2 = JSON.parse(document.getElementById('notice-data').textContent);
+  var CATS2 = DATA2.categories;
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function fmtKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+  function toDate(s){ var p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); }
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var viewYear = today.getFullYear(), viewMonth = today.getMonth();
+  var selectedKey = null;
+
+  var grid = document.getElementById('cal-grid');
+  var label = document.getElementById('cal-month-label');
+  var detail = document.getElementById('cal-detail');
+  var prevBtn = document.getElementById('cal-prev');
+  var nextBtn = document.getElementById('cal-next');
+
+  function eventsOnDay(key){
+    return EVENTS.filter(function(ev){ return key >= ev.start && key <= (ev.end || ev.start); });
+  }
+
+  function renderDetail(){
+    if (!selectedKey){ detail.className = 'cal-detail'; detail.innerHTML = ''; return; }
+    var evs = eventsOnDay(selectedKey);
+    if (!evs.length){ detail.className = 'cal-detail'; detail.innerHTML = ''; return; }
+    var html2 = '<div class="cal-detail-date">' + selectedKey.replace(/-/g,'.') + '</div>';
+    evs.forEach(function(ev){
+      var catInfo = CATS2[ev.cat] || {icon:'', label: ev.cat};
+      var rangeLabel = (ev.end && ev.end !== ev.start) ? (ev.start + ' ~ ' + ev.end) : ev.start;
+      html2 += '<div class="cal-event-item"><span class="cal-event-cat">' + catInfo.icon + ' ' + catInfo.label + '</span>' +
+        '<div><div class="cal-event-title">' + ev.title + '</div><div class="cal-event-range">' + rangeLabel + '</div></div></div>';
+    });
+    detail.className = 'cal-detail show';
+    detail.innerHTML = html2;
+  }
+
+  function renderCal(){
+    label.textContent = viewYear + '년 ' + (viewMonth+1) + '월';
+    grid.innerHTML = '';
+    ['일','월','화','수','목','금','토'].forEach(function(d){
+      var el = document.createElement('div');
+      el.className = 'cal-dow';
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+    var first = new Date(viewYear, viewMonth, 1);
+    var startPad = first.getDay();
+    var daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+    for (var i=0;i<startPad;i++){
+      var pad = document.createElement('div');
+      pad.className = 'cal-cell pad';
+      grid.appendChild(pad);
+    }
+    for (var d=1; d<=daysInMonth; d++){
+      var cellDate = new Date(viewYear, viewMonth, d);
+      var key = fmtKey(cellDate);
+      var cell = document.createElement('div');
+      var cls = 'cal-cell';
+      var evs = eventsOnDay(key);
+      if (evs.length) cls += ' has-event';
+      if (fmtKey(today) === key) cls += ' today';
+      if (key === selectedKey) cls += ' selected';
+      cell.className = cls;
+      cell.innerHTML = '<span>' + d + '</span>' + (evs.length ? '<span class="cal-dot"></span>' : '');
+      if (evs.length){
+        (function(k){
+          cell.addEventListener('click', function(){
+            selectedKey = (selectedKey === k) ? null : k;
+            renderCal();
+          });
+        })(key);
+      }
+      grid.appendChild(cell);
+    }
+    renderDetail();
+  }
+
+  prevBtn.addEventListener('click', function(){
+    viewMonth--; if (viewMonth < 0){ viewMonth = 11; viewYear--; }
+    renderCal();
+  });
+  nextBtn.addEventListener('click', function(){
+    viewMonth++; if (viewMonth > 11){ viewMonth = 0; viewYear++; }
+    renderCal();
+  });
+
+  var todayKey = fmtKey(today);
+  if (eventsOnDay(todayKey).length){
+    selectedKey = todayKey;
+  } else {
+    var upcoming = EVENTS.filter(function(ev){ return ev.start >= todayKey; }).sort(function(a,b){ return a.start < b.start ? -1 : 1; })[0];
+    if (upcoming){
+      selectedKey = upcoming.start;
+      var ud = toDate(upcoming.start);
+      viewYear = ud.getFullYear();
+      viewMonth = ud.getMonth();
+    }
+  }
+
+  renderCal();
 })();
 </script>
 </body>
