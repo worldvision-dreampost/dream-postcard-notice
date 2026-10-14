@@ -505,23 +505,22 @@ footer {
 .cal-month-label { font-family: ui-monospace, "SF Mono", "Roboto Mono", monospace; font-size:12.5px; font-weight:700; color:var(--ink); min-width:72px; text-align:center; }
 .cal-dow-row { display:grid; grid-template-columns: repeat(7,1fr); }
 .cal-dow { font-size:10px; font-weight:700; color:var(--ink-faint); text-align:center; padding:2px 0 6px; }
-.cal-week { margin-bottom:3px; }
+.cal-week { margin-bottom:6px; }
 .cal-week-daynums { display:grid; grid-template-columns: repeat(7,1fr); }
-.cal-daynum-cell { font-size:10px; text-align:right; padding:3px 4px 2px; color:var(--ink-soft); font-weight:600; }
+.cal-daynum-cell { font-size:10.5px; text-align:right; padding:3px 4px 2px; color:var(--ink-soft); font-weight:600; }
 .cal-daynum-cell.pad { visibility:hidden; }
 .cal-daynum-cell.today { color:var(--accent); font-weight:800; }
-.cal-week-bars { display:grid; grid-template-columns: repeat(7,1fr); grid-auto-rows:18px; gap:2px 0; }
-.cal-bar { font-size:9.5px; line-height:18px; padding:0 5px; margin:0 1px; border-radius:5px; background:var(--accent-2-soft); color:var(--accent-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700; }
+.cal-week-bars { display:grid; grid-template-columns: repeat(7,1fr); grid-auto-rows:34px; gap:3px 0; align-items:start; }
+.cal-bar {
+  font-size:10.5px; line-height:1.25; padding:4px 6px; margin:0 1px; border-radius:6px;
+  background:var(--accent-2-soft); color:var(--accent-2); font-weight:700;
+  white-space:normal; overflow:hidden; text-overflow:ellipsis;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+}
 @media (max-width: 560px) {
   .cal-daynum-cell { font-size:9px; }
-  .cal-bar { font-size:7.8px; padding:0 3px; }
-}
-@media (min-width: 900px) {
-  .cal-card { max-width:1180px; width:calc(100% + 300px); position:relative; left:50%; transform:translateX(-50%); padding:20px 26px; }
-  .cal-week-bars { grid-auto-rows:22px; gap:3px 0; }
-  .cal-bar { font-size:11.5px; line-height:22px; padding:0 7px; }
-  .cal-daynum-cell { font-size:12px; padding:5px 6px 3px; }
-  .cal-dow { font-size:11.5px; }
+  .cal-week-bars { grid-auto-rows:30px; }
+  .cal-bar { font-size:8.8px; padding:3px 4px; }
 }
 </style>
 </head>
@@ -681,7 +680,7 @@ footer {
   var manual = loadManual();
 
   // --- Google Sheets 자동연동: 시트에 새 공지를 올리면 사이트 접속 시 자동으로 반영됩니다 ---
-  var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1zDEklQqVnDyPfYwZgIvWZVDH36C1PEHUgQCww8Uf868/export?format=csv&gid=0';
+  var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1SBD-jfhkTl5aXmtm8M44_f9zHwvgnRBMHywyIjo_gBI/export?format=csv&gid=0';
   var sheetNotices = [];
 
   function parseCSV(text) {
@@ -719,7 +718,7 @@ footer {
         var header = rows[0].map(function(h) { return h.trim(); });
         var idx = {
           date: header.indexOf('날짜'), time: header.indexOf('시간'), cat: header.indexOf('분류코드'),
-          title: header.indexOf('제목'), body: header.indexOf('내용')
+          title: header.indexOf('제목'), body: header.indexOf('내용'), room: header.indexOf('채팅방')
         };
         var existingKeys = {};
         BUILTIN.concat(manual).forEach(function(e) { existingKeys[e.date + '|' + (e.title || '').trim()] = true; });
@@ -740,6 +739,7 @@ footer {
             cat: cat,
             title: title,
             body: (idx.body > -1 ? (r[idx.body] || '') : '').trim(),
+            room: (idx.room > -1 ? (r[idx.room] || '') : '').trim(),
             source: 'sheet'
           });
         }
@@ -939,7 +939,6 @@ footer {
     var bodyHTML = linkify(highlight(bodyEscaped, q));
     var snippet = (e.body || '').replace(/\n+/g, ' ').slice(0, 60);
     var snipHTML = highlight(escapeHTML(snippet), q);
-    var manualTag = e.source === 'manual' ? '<span class="manual-tag">✎ 내 기기 등록</span>' : '';
     var sheetTag = e.source === 'sheet' ? '<span class="sheet-tag">📋 구글시트 연동</span>' : '';
     var roomTag = e.room ? '<span class="room-tag">💬 ' + escapeHTML(e.room) + '</span>' : '';
     var delRow = e.source === 'manual' ? '<div class="del-row"><button type="button" class="del-btn" data-del="' + e.id + '">이 등록 삭제</button></div>' : '';
@@ -948,7 +947,7 @@ footer {
       '<div class="notice-date"><span class="day mono">' + dp.day + '</span><span class="mo">' + dp.mo + ' ' + dp.wd + '</span><span class="time mono">' + e.time + '</span></div>' +
       '<div class="notice-main">' +
         '<button type="button" class="notice-btn">' +
-          '<div class="notice-top"><span class="cat-tag">' + CATS[e.cat].icon + ' ' + CATS[e.cat].label + '</span>' + manualTag + sheetTag + roomTag + '<span class="chevron">&#9656;</span></div>' +
+          '<div class="notice-top"><span class="cat-tag">' + CATS[e.cat].icon + ' ' + CATS[e.cat].label + '</span>' + sheetTag + roomTag + '<span class="chevron">&#9656;</span></div>' +
           '<div class="notice-title">' + titleHTML + '</div>' +
           '<div class="notice-snip">' + snipHTML + '&hellip;</div>' +
         '</button>' +
