@@ -764,6 +764,9 @@ footer {
       return ka < kb ? 1 : (ka > kb ? -1 : 0);
     });
   }
+  // 캘린더 스크립트(아래 두 번째 <script>)가 "날짜가 있는 모든 공지"를 가져다 쓸 수 있도록 노출
+  window.__dp2026_getEntries = allEntries;
+  function refreshCalIfReady() { if (window.__dp2026_renderCal) window.__dp2026_renderCal(); }
 
   var chipRow = document.getElementById('chip-row');
   var searchInput = document.getElementById('search');
@@ -928,6 +931,7 @@ footer {
       }
       wrap.appendChild(buildNotice(e, dp, q, i < 3));
     });
+    refreshCalIfReady();
   }
 
   function buildNotice(e, dp, q, openByDefault) {
@@ -1079,8 +1083,20 @@ footer {
     {start:"2026-08-21", end:"2026-08-28", title:"수상자 정보 확인", cat:"SCHED"},
     {start:"2026-08-27", end:"2026-08-27", title:"전국단위 상장(8종) 정보 확인 마감", cat:"JUDGE"},
     {start:"2026-09-01", end:"2026-09-11", title:"상장 발급요청/제작", cat:"SCHED"},
-    {start:"2026-09-14", end:"2026-09-14", title:"상장 발송 시작", cat:"SCHED"}
+    {start:"2026-09-14", end:"2026-09-14", title:"상장 발송 시작", cat:"SCHED"},
+    {start:"2026-10-20", end:"2026-10-20", title:"꿈엽서 담당자 하반기 모임(본부)", cat:"HR"},
+    {start:"2026-10-31", end:"2026-10-31", title:"상장·상품 전달 완료 목표(10월 말)", cat:"JUDGE"}
   ];
+
+  // 날짜가 있는 모든 공지(73건 + 추가분)를 달력에 자동으로 표기 — 위 EVENTS는 공지에는 없는
+  // 별도 마감/모임 일정만 손으로 추가하면 되고, 나머지는 공지 목록에서 자동 반영됩니다.
+  function noticeEvents() {
+    var getEntries = window.__dp2026_getEntries;
+    if (!getEntries) return [];
+    return getEntries().filter(function(e) { return e.date; }).map(function(e) {
+      return { start: e.date, end: e.date, title: e.title, cat: e.cat, fromNotice: true };
+    });
+  }
 
   function pad2(n){ return n < 10 ? '0' + n : '' + n; }
   function fmtKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
@@ -1103,7 +1119,8 @@ footer {
     var realKeys = weekDates.filter(function(d){ return !d.isPad; }).map(function(d){ return d.key; });
     if (!realKeys.length) return [];
     var weekStartKey = realKeys[0], weekEndKey = realKeys[realKeys.length-1];
-    var active = EVENTS.filter(function(ev){
+    var allEvents = EVENTS.concat(noticeEvents());
+    var active = allEvents.filter(function(ev){
       var evEnd = ev.end || ev.start;
       return ev.start <= weekEndKey && evEnd >= weekStartKey;
     });
@@ -1204,6 +1221,7 @@ footer {
     renderCal();
   });
 
+  window.__dp2026_renderCal = renderCal;
   renderCal();
 })();
 </script>
