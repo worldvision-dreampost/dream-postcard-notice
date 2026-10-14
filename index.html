@@ -18,6 +18,8 @@
   --accent-2-soft: #f7e8da;
   --manual: #b8860b;
   --manual-soft: #fbf0d6;
+  --sheet: #1a7a46;
+  --sheet-soft: #e3f5ea;
   --grad-start: #e8531c;
   --grad-end: #ffab5e;
   --header-ink: #ffffff;
@@ -41,6 +43,8 @@
     --accent-2-soft: #33240f;
     --manual: #e0b84a;
     --manual-soft: #3a2f10;
+    --sheet: #4fd98a;
+    --sheet-soft: #163a26;
     --grad-start: #b5410f;
     --grad-end: #e0803a;
     --header-ink: #fff6ee;
@@ -64,6 +68,8 @@
   --accent-2-soft: #33240f;
   --manual: #e0b84a;
   --manual-soft: #3a2f10;
+  --sheet: #4fd98a;
+  --sheet-soft: #163a26;
   --grad-start: #b5410f;
   --grad-end: #e0803a;
   --header-ink: #fff6ee;
@@ -86,6 +92,8 @@
   --accent-2-soft: #f7e8da;
   --manual: #b8860b;
   --manual-soft: #fbf0d6;
+  --sheet: #1a7a46;
+  --sheet-soft: #e3f5ea;
   --grad-start: #e8531c;
   --grad-end: #ffab5e;
   --header-ink: #ffffff;
@@ -410,6 +418,7 @@ main { max-width: 880px; margin: 0 auto; padding: 22px 24px 0; }
   border-radius: 12px; box-shadow: var(--shadow); overflow: hidden;
 }
 .notice.is-manual { border-color: var(--manual); border-style: dashed; }
+.notice.is-sheet { border-color: var(--sheet); border-style: dashed; }
 
 .notice-date {
   flex-shrink: 0; width: 66px; display: flex; flex-direction: column;
@@ -438,6 +447,10 @@ main { max-width: 880px; margin: 0 auto; padding: 22px 24px 0; }
 .room-tag {
   display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700;
   color: #6b5bd6; background: #ece9fb; padding: 2px 7px; border-radius: 999px; flex-shrink: 0;
+}
+.sheet-tag {
+  display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700;
+  color: var(--sheet); background: var(--sheet-soft); padding: 2px 7px; border-radius: 999px; flex-shrink: 0;
 }
 .notice-title { font-size: 14.5px; font-weight: 700; line-height: 1.4; text-wrap: balance; }
 .notice-snip { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
@@ -497,11 +510,18 @@ footer {
 .cal-daynum-cell { font-size:10px; text-align:right; padding:3px 4px 2px; color:var(--ink-soft); font-weight:600; }
 .cal-daynum-cell.pad { visibility:hidden; }
 .cal-daynum-cell.today { color:var(--accent); font-weight:800; }
-.cal-week-bars { display:grid; grid-template-columns: repeat(7,1fr); grid-auto-rows:16px; gap:2px 0; }
-.cal-bar { font-size:8.8px; line-height:16px; padding:0 5px; margin:0 1px; border-radius:5px; background:var(--accent-2-soft); color:var(--accent-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700; }
+.cal-week-bars { display:grid; grid-template-columns: repeat(7,1fr); grid-auto-rows:18px; gap:2px 0; }
+.cal-bar { font-size:9.5px; line-height:18px; padding:0 5px; margin:0 1px; border-radius:5px; background:var(--accent-2-soft); color:var(--accent-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700; }
 @media (max-width: 560px) {
   .cal-daynum-cell { font-size:9px; }
   .cal-bar { font-size:7.8px; padding:0 3px; }
+}
+@media (min-width: 900px) {
+  .cal-card { max-width:1180px; width:calc(100% + 300px); position:relative; left:50%; transform:translateX(-50%); padding:20px 26px; }
+  .cal-week-bars { grid-auto-rows:22px; gap:3px 0; }
+  .cal-bar { font-size:11.5px; line-height:22px; padding:0 7px; }
+  .cal-daynum-cell { font-size:12px; padding:5px 6px 3px; }
+  .cal-dow { font-size:11.5px; }
 }
 </style>
 </head>
@@ -539,6 +559,7 @@ footer {
   <a class="quicklinks-item" href="https://wvi365.sharepoint.com/:f:/s/msteams_f79ae3/IgBl3EnAigMxQ7jXrigSQECvAdkkbwEf67y-uW8x9q3W69c?e=uRlHsq" target="_blank" rel="noopener">📁 원드라이브 자료</a>
   <a class="quicklinks-item" href="https://wvk.my.salesforce.com/?ec=302&amp;startURL=%2Fvisualforce%2Fsession%3Furl%3Dhttps%253A%252F%252Fwvk.lightning.force.com%252Flightning%252Fr%252FDashboard%252F01ZTJ00000EU3dj2AD%252Fview" target="_blank" rel="noopener">📈 CRM 대시보드</a>
   <a class="quicklinks-item" href="https://26dreampost-dashboard.netlify.app/" target="_blank" rel="noopener">📊 실무자용 데이터 대시보드</a>
+  <a class="quicklinks-item" href="https://wv-dreampostcard-cert.sophiahye.workers.dev/" target="_blank" rel="noopener">🏆 상장 재발급기</a>
 </div>
 <style>
 .quicklinks{position:sticky;top:var(--header-h, 96px);z-index:15;max-width:880px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--paper);border-bottom:1px solid var(--line);}
@@ -659,10 +680,86 @@ footer {
   }
   var manual = loadManual();
 
+  // --- Google Sheets 자동연동: 시트에 새 공지를 올리면 사이트 접속 시 자동으로 반영됩니다 ---
+  var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1zDEklQqVnDyPfYwZgIvWZVDH36C1PEHUgQCww8Uf868/export?format=csv&gid=0';
+  var sheetNotices = [];
+
+  function parseCSV(text) {
+    var rows = [], row = [], field = '', inQuotes = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = false; } }
+        else { field += c; }
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c === '\r') { /* CRLF: skip, \n above closes the row */ }
+        else { field += c; }
+      }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(function(r) { return r.some(function(v) { return v && v.trim(); }); });
+  }
+
+  function simpleHash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) | 0; }
+    return (h >>> 0).toString(36);
+  }
+
+  function loadSheetNotices() {
+    if (!SHEET_CSV_URL) return;
+    fetch(SHEET_CSV_URL, { cache: 'no-store' })
+      .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+      .then(function(text) {
+        var rows = parseCSV(text);
+        if (rows.length < 2) return;
+        var header = rows[0].map(function(h) { return h.trim(); });
+        var idx = {
+          date: header.indexOf('날짜'), time: header.indexOf('시간'), cat: header.indexOf('분류코드'),
+          title: header.indexOf('제목'), body: header.indexOf('내용')
+        };
+        var existingKeys = {};
+        BUILTIN.concat(manual).forEach(function(e) { existingKeys[e.date + '|' + (e.title || '').trim()] = true; });
+        var fresh = [];
+        for (var i = 1; i < rows.length; i++) {
+          var r = rows[i];
+          var date = (idx.date > -1 ? (r[idx.date] || '') : '').trim();
+          var title = (idx.title > -1 ? (r[idx.title] || '') : '').trim();
+          if (!date || !title || title.indexOf('(예시)') === 0) continue;
+          var key = date + '|' + title;
+          if (existingKeys[key]) continue;
+          var cat = (idx.cat > -1 ? (r[idx.cat] || '') : '').trim().toUpperCase();
+          if (!CATS[cat]) cat = 'GEN';
+          fresh.push({
+            id: 'sheet_' + simpleHash(key),
+            date: date,
+            time: (idx.time > -1 ? (r[idx.time] || '') : '').trim() || '00:00',
+            cat: cat,
+            title: title,
+            body: (idx.body > -1 ? (r[idx.body] || '') : '').trim(),
+            source: 'sheet'
+          });
+        }
+        var changed = fresh.length !== sheetNotices.length ||
+          fresh.some(function(e, i) { return !sheetNotices[i] || sheetNotices[i].id !== e.id; });
+        var hadBefore = sheetNotices.length;
+        sheetNotices = fresh;
+        if (changed) {
+          render();
+          if (fresh.length && fresh.length !== hadBefore) toast('구글시트에서 공지 ' + fresh.length + '건을 불러왔어요');
+        }
+      })
+      .catch(function(err) { console.warn('구글시트 공지 불러오기 실패:', err); });
+  }
+  // --- /Google Sheets 자동연동 ---
+
   var state = { q: '', cat: 'ALL' };
 
   function allEntries() {
-    return BUILTIN.concat(manual).slice().sort(function(a, b) {
+    return BUILTIN.concat(manual).concat(sheetNotices).slice().sort(function(a, b) {
       var ka = a.date + 'T' + a.time, kb = b.date + 'T' + b.time;
       return ka < kb ? 1 : (ka > kb ? -1 : 0);
     });
@@ -835,7 +932,7 @@ footer {
 
   function buildNotice(e, dp, q, openByDefault) {
     var art = document.createElement('article');
-    art.className = 'notice' + (e.source === 'manual' ? ' is-manual' : '') + (openByDefault ? ' open' : '');
+    art.className = 'notice' + (e.source === 'manual' ? ' is-manual' : '') + (e.source === 'sheet' ? ' is-sheet' : '') + (openByDefault ? ' open' : '');
 
     var titleHTML = highlight(escapeHTML(e.title), q);
     var bodyEscaped = escapeHTML(e.body || '');
@@ -843,6 +940,7 @@ footer {
     var snippet = (e.body || '').replace(/\n+/g, ' ').slice(0, 60);
     var snipHTML = highlight(escapeHTML(snippet), q);
     var manualTag = e.source === 'manual' ? '<span class="manual-tag">✎ 내 기기 등록</span>' : '';
+    var sheetTag = e.source === 'sheet' ? '<span class="sheet-tag">📋 구글시트 연동</span>' : '';
     var roomTag = e.room ? '<span class="room-tag">💬 ' + escapeHTML(e.room) + '</span>' : '';
     var delRow = e.source === 'manual' ? '<div class="del-row"><button type="button" class="del-btn" data-del="' + e.id + '">이 등록 삭제</button></div>' : '';
 
@@ -850,7 +948,7 @@ footer {
       '<div class="notice-date"><span class="day mono">' + dp.day + '</span><span class="mo">' + dp.mo + ' ' + dp.wd + '</span><span class="time mono">' + e.time + '</span></div>' +
       '<div class="notice-main">' +
         '<button type="button" class="notice-btn">' +
-          '<div class="notice-top"><span class="cat-tag">' + CATS[e.cat].icon + ' ' + CATS[e.cat].label + '</span>' + manualTag + roomTag + '<span class="chevron">&#9656;</span></div>' +
+          '<div class="notice-top"><span class="cat-tag">' + CATS[e.cat].icon + ' ' + CATS[e.cat].label + '</span>' + manualTag + sheetTag + roomTag + '<span class="chevron">&#9656;</span></div>' +
           '<div class="notice-title">' + titleHTML + '</div>' +
           '<div class="notice-snip">' + snipHTML + '&hellip;</div>' +
         '</button>' +
@@ -955,6 +1053,8 @@ footer {
   });
 
   render();
+  loadSheetNotices();
+  setInterval(loadSheetNotices, 10 * 60 * 1000);
 })();
 </script>
 
